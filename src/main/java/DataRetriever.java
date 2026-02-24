@@ -28,7 +28,7 @@ public class DataRetriever {
         }
     }
 
-    List<VoteTypeCount> countVotesByType(){
+    public List<VoteTypeCount> countVotesByType(){
         List<VoteTypeCount> voteTypeCounts = new ArrayList<>();
         String query = """
                 select vote_type, COUNT(id)
@@ -55,7 +55,7 @@ public class DataRetriever {
         }
     }
 
-    List<CandidateVoteCount> countValidVotesByCandidate(){
+    public List<CandidateVoteCount> countValidVotesByCandidate(){
         List<CandidateVoteCount> candidateVoteCounts = new ArrayList<>();
         String query = """
                         select c.name as candidate_name, count(
@@ -86,6 +86,32 @@ public class DataRetriever {
             throw new  RuntimeException(e);
         } finally {
             return candidateVoteCounts;
+        }
+    }
+
+    public VoteSummary computeVoteSummary(){
+        VoteSummary voteSummary = new VoteSummary();
+        String query = """
+                select
+                    count(case when vote_type = 'VALID' then 1 end) as valid_count,
+                    count(case when vote_type = 'BLANK' then 1 end) as blank_count,
+                    count(case when vote_type = 'NULL' then 1 end) as null_count
+                from vote;
+                """;
+        try(
+                Connection conn = new DBConnection().getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query);
+                ResultSet rs = stmt.executeQuery();
+                ){
+            if(rs.next()) {
+                voteSummary.setValidCount(rs.getInt("valid_count"));
+                voteSummary.setBlankCount(rs.getInt("blank_count"));
+                voteSummary.setNullCount(rs.getInt("null_count"));
+            }
+        } catch (Exception e){
+            throw new  RuntimeException(e);
+        } finally {
+            return voteSummary;
         }
     }
 }
