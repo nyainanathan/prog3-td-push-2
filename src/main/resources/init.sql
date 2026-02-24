@@ -36,3 +36,6 @@ INSERT INTO vote (candidate_id, voter_id, vote_type) VALUES
      (2, 4, 'BLANK'),
      (NULL, 5, 'BLANK'),
      (3, 6, 'NULL');
+
+INSERT INTO vote (candidate_id, voter_id, vote_type) VALUES
+                                                         (1, 1, 'VALID');
