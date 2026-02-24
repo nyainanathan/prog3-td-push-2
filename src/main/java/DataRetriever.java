@@ -79,7 +79,7 @@ public class DataRetriever {
             while(rs.next()) {
                 CandidateVoteCount candidateVote = new CandidateVoteCount();
                 candidateVote.setCandidateName(rs.getString("candidate_name"));
-                candidateVote.setValidVotesCount(rs.getInt("valid_votes"));
+                candidateVote.setValidVotesCount(rs.getInt("valid_vote"));
                 candidateVoteCounts.add(candidateVote);
             }
         } catch (Exception e){
@@ -125,13 +125,14 @@ public class DataRetriever {
                 PreparedStatement stmt = conn.prepareStatement(query);
                 ResultSet rs = stmt.executeQuery();
                 ){
-            result = rs.getDouble("turnout_rate");
+                    if(rs.next()) result = rs.getDouble("turnout_rate");
         } catch (Exception e){
             throw new  RuntimeException(e);
         } finally {
             return result;
         }
     }
+
     public ElectionResult findWinner(){
         ElectionResult result = new ElectionResult();
         String query = """

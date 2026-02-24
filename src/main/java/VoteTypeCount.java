@@ -32,6 +32,6 @@ public class VoteTypeCount {
         return "VoteTypeCount{" +
                 "voteType=" + voteType +
                 ", count=" + count +
-                '}';
+                "}\n";
     }
 }
