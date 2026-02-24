@@ -26,4 +26,12 @@ public class VoteTypeCount {
     public void setCount(int count) {
         this.count = count;
     }
+
+    @Override
+    public String toString() {
+        return "VoteTypeCount{" +
+                "voteType=" + voteType +
+                ", count=" + count +
+                '}';
+    }
 }

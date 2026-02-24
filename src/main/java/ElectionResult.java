@@ -17,4 +17,12 @@ public class ElectionResult {
     public void setValidVoteCount(int validVoteCount) {
         this.validVoteCount = validVoteCount;
     }
+
+    @Override
+    public String toString() {
+        return "ElectionResult{" +
+                "candidateName='" + candidateName + '\'' +
+                ", validVoteCount=" + validVoteCount +
+                '}';
+    }
 }

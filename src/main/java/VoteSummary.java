@@ -26,4 +26,13 @@ public class VoteSummary {
     public void setNullCount(int nullCount) {
         this.nullCount = nullCount;
     }
+
+    @Override
+    public String toString() {
+        return "VoteSummary{" +
+                "validCount=" + validCount +
+                ", blankCount=" + blankCount +
+                ", nullCount=" + nullCount +
+                '}';
+    }
 }
