@@ -115,7 +115,7 @@ public class DataRetriever {
         }
     }
 
-    double computeTurnoutRate(){
+    public double computeTurnoutRate(){
         double result = 0;
         String query = """
                 select ((select count(distinct voter_id) from vote) / (select count(id) from voter)) * 100 as turnout_rate;
@@ -126,6 +126,37 @@ public class DataRetriever {
                 ResultSet rs = stmt.executeQuery();
                 ){
             result = rs.getDouble("turnout_rate");
+        } catch (Exception e){
+            throw new  RuntimeException(e);
+        } finally {
+            return result;
+        }
+    }
+    public ElectionResult findWinner(){
+        ElectionResult result = new ElectionResult();
+        String query = """
+                select c.name as candidate_name,
+                       count(
+                        case
+                            when v.vote_type = 'VALID' then 1
+                            end
+                        ) AS valid_vote_count
+                from vote v
+                join candidate c ON v.candidate_id = c.id
+                GROUP BY c.name
+                ORDER BY valid_vote_count desc
+                LIMIT 1;
+                """;
+
+        try(
+                Connection conn = new DBConnection().getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query);
+                ResultSet rs = stmt.executeQuery();
+                ) {
+            if(rs.next()) {
+                result.setCandidateName(rs.getString("candidate_name"));
+                result.setValidVoteCount(rs.getInt("valid_vote_count"));
+            }
         } catch (Exception e){
             throw new  RuntimeException(e);
         } finally {
