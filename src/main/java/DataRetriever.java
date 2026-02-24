@@ -114,4 +114,22 @@ public class DataRetriever {
             return voteSummary;
         }
     }
+
+    double computeTurnoutRate(){
+        double result = 0;
+        String query = """
+                select ((select count(distinct voter_id) from vote) / (select count(id) from voter)) * 100 as turnout_rate;
+        """;
+        try(
+                Connection conn = new DBConnection().getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query);
+                ResultSet rs = stmt.executeQuery();
+                ){
+            result = rs.getDouble("turnout_rate");
+        } catch (Exception e){
+            throw new  RuntimeException(e);
+        } finally {
+            return result;
+        }
+    }
 }
