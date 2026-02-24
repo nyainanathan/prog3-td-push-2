@@ -54,4 +54,38 @@ public class DataRetriever {
             return voteTypeCounts;
         }
     }
+
+    List<CandidateVoteCount> countValidVotesByCandidate(){
+        List<CandidateVoteCount> candidateVoteCounts = new ArrayList<>();
+        String query = """
+                        select c.name as candidate_name, count(
+                                       case
+                                            when v.vote_type = 'VALID' then 1
+                                            end
+                                       ) AS valid_vote
+                        from vote v
+                        right join candidate c
+                        ON v.candidate_id = c.id
+                        GROUP BY c.name
+                        ORDER BY valid_vote desc
+                        ;
+        """;
+
+        try(
+                Connection conn = new DBConnection().getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query);
+                ResultSet rs = stmt.executeQuery();
+                ){
+            while(rs.next()) {
+                CandidateVoteCount candidateVote = new CandidateVoteCount();
+                candidateVote.setCandidateName(rs.getString("candidate_name"));
+                candidateVote.setValidVotesCount(rs.getInt("valid_votes"));
+                candidateVoteCounts.add(candidateVote);
+            }
+        } catch (Exception e){
+            throw new  RuntimeException(e);
+        } finally {
+            return candidateVoteCounts;
+        }
+    }
 }
